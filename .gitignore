@@ -1,0 +1,63 @@
+## generic files to ignore
+*~
+*.lock
+*.DS_Store
+*.swp
+*.out
+*~
+\#*#
+*.orig
+*.rej
+.AppleDouble
+.#*
+._*
+.idea
+.bundle
+.sass-cache
+demos/growl/xcode/BackChat.io Growl/build
+
+# java specific
+*.class
+
+project/boot
+project/build/*
+project/plugins/*
+*/project/boot
+*/target
+*/project/build/*
+*/project/plugins/*
+*/target/*
+*/.idea
+.idea
+*.iml
+*/lib_managed
+target
+*/dist
+
+# eclipse
+.classpath
+.project
+.scala_dependencies
+bin
+.target
+
+logs
+lib_managed
+data logs
+data
+dist
+web/backchat-backend.jar
+
+mongodump.tar.bz2
+
+doc.json
+
+mapping.json
+core/.cache
+.cache
+*.sublime-*
+backchat_development/
+backchat_development.tar.bz2
+org.scala-ide.sdt.core.prefs
+
+
