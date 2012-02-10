@@ -26,8 +26,8 @@ sealed abstract class HttpEncodingRange {
 sealed abstract class HttpEncoding extends HttpEncodingRange {
   def matches(encoding: HttpEncoding) = this == encoding
   override def equals(obj: Any) = obj match {
-    case x: HttpEncoding => (this eq x) || (value eq x.value)
-    case _ => false
+    case x: HttpEncoding ⇒ (this eq x) || (value eq x.value)
+    case _               ⇒ false
   }
   override def hashCode() = value.##
   override def toString = "HttpEncoding(" + value + ')'
@@ -35,23 +35,23 @@ sealed abstract class HttpEncoding extends HttpEncodingRange {
 
 // see http://www.iana.org/assignments/http-parameters/http-parameters.xml
 object HttpEncodings extends ObjectRegistry[String, HttpEncoding] {
-  
+
   def register(encoding: HttpEncoding): HttpEncoding = { register(encoding, encoding.value); encoding }
-  
+
   val `*` = new HttpEncodingRange {
     def value = "*"
     def matches(encoding: HttpEncoding) = true
   }
-  
+
   private class PredefEncoding(val value: String) extends HttpEncoding
-  
-  val compress      = register(new PredefEncoding("compress"))
-  val chunked       = register(new PredefEncoding("chunked"))
-  val deflate       = register(new PredefEncoding("deflate"))
-  val gzip          = register(new PredefEncoding("gzip"))
-  val identity      = register(new PredefEncoding("identity"))
-  val `x-compress`  = register(new PredefEncoding("x-compress"))
-  val `x-zip`       = register(new PredefEncoding("x-zip"))
+
+  val compress = register(new PredefEncoding("compress"))
+  val chunked = register(new PredefEncoding("chunked"))
+  val deflate = register(new PredefEncoding("deflate"))
+  val gzip = register(new PredefEncoding("gzip"))
+  val identity = register(new PredefEncoding("identity"))
+  val `x-compress` = register(new PredefEncoding("x-compress"))
+  val `x-zip` = register(new PredefEncoding("x-zip"))
 
   class CustomHttpEncoding(_value: String) extends HttpEncoding {
     val value = _value.toLowerCase.intern()

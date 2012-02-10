@@ -21,28 +21,28 @@ import java.util.Arrays
 import HttpCharsets._
 import MediaTypes._
 
-class HttpContent private[http](val contentType: ContentType, val buffer: Array[Byte]) {
+class HttpContent private[http] (val contentType: ContentType, val buffer: Array[Byte]) {
   def withContentType(contentType: ContentType) = new HttpContent(contentType, buffer)
   def withBuffer(buffer: Array[Byte]) = new HttpContent(contentType, buffer)
 
   override def toString = "HttpContent(" + contentType + ',' + new String(buffer, contentType.charset.getOrElse(`ISO-8859-1`).nioCharset) + ')'
   override def hashCode = contentType.## * 31 + Arrays.hashCode(buffer)
   override def equals(obj: Any) = obj match {
-    case o: HttpContent => contentType == o.contentType && Arrays.equals(buffer, o.buffer)
-    case _ => false
+    case o: HttpContent ⇒ contentType == o.contentType && Arrays.equals(buffer, o.buffer)
+    case _              ⇒ false
   }
 }
 
 object HttpContent {
   def apply(string: String): HttpContent = apply(ContentType(`text/plain`, `ISO-8859-1`), string)
-  
+
   def apply(contentType: ContentType, string: String): HttpContent = {
     apply(contentType, string.getBytes(contentType.charset.getOrElse(`ISO-8859-1`).nioCharset))
   }
-  
+
   def apply(contentType: ContentType, buffer: Array[Byte]): HttpContent = new HttpContent(contentType, buffer)
 
-/*  implicit def pimpHttpContentWithAs1(c: HttpContent): HttpContentExtractor = new HttpContentExtractor(Some(c))
+  /*  implicit def pimpHttpContentWithAs1(c: HttpContent): HttpContentExtractor = new HttpContentExtractor(Some(c))
   implicit def pimpHttpContentWithAs2(c: Option[HttpContent]): HttpContentExtractor = new HttpContentExtractor(c)
 
   class HttpContentExtractor(content: Option[HttpContent]) {

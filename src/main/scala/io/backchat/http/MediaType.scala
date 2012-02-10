@@ -20,24 +20,24 @@ package io.backchat.http
 sealed abstract class MediaRange {
   val value = mainType + "/*"
   def mainType: String
-  
+
   def matches(mediaType: MediaType): Boolean
-  
+
   def isApplication = false
-  def isAudio       = false
-  def isImage       = false
-  def isMessage     = false
-  def isMultipart   = false
-  def isText        = false
-  def isVideo       = false
-  
+  def isAudio = false
+  def isImage = false
+  def isMessage = false
+  def isMultipart = false
+  def isText = false
+  def isVideo = false
+
   override def toString = "MediaRange(" + value + ')'
 }
 
 object MediaRanges extends ObjectRegistry[String, MediaRange] {
-  
+
   def register(mediaRange: MediaRange): MediaRange = { register(mediaRange, mediaRange.mainType); mediaRange }
-  
+
   val `*/*` = register {
     new MediaRange {
       def mainType = "*"
@@ -93,17 +93,17 @@ object MediaRanges extends ObjectRegistry[String, MediaRange] {
       override def isVideo = true
     }
   }
-  
+
   case class CustomMediaRange(mainType: String) extends MediaRange {
     require(mainType == mainType.toLowerCase, "For best performance custom media ranges must be defined in lowercase")
     def matches(mediaType: MediaType) = mediaType.mainType == mainType
     override def isApplication = mainType == "application"
-    override def isAudio       = mainType == "audio"
-    override def isImage       = mainType == "image"
-    override def isMessage     = mainType == "message"
-    override def isMultipart   = mainType == "multipart"
-    override def isText        = mainType == "text"
-    override def isVideo       = mainType == "video"
+    override def isAudio = mainType == "audio"
+    override def isImage = mainType == "image"
+    override def isMessage = mainType == "message"
+    override def isMultipart = mainType == "multipart"
+    override def isText = mainType == "text"
+    override def isVideo = mainType == "video"
   }
 }
 
@@ -116,8 +116,8 @@ sealed abstract class MediaType extends MediaRange {
   override def matches(mediaType: MediaType) = this == mediaType
 
   override def equals(obj: Any) = obj match {
-    case x: MediaType => (this eq x) || (mainType eq x.mainType) && (subType eq x.subType)
-    case _ => false
+    case x: MediaType ⇒ (this eq x) || (mainType eq x.mainType) && (subType eq x.subType)
+    case _            ⇒ false
   }
 
   override def hashCode() = value.##
@@ -129,14 +129,14 @@ object MediaType {
 }
 
 object MediaTypes extends ObjectRegistry[String, MediaType] {
-  
+
   def register(mediaType: MediaType): MediaType = { register(mediaType, mediaType.value); mediaType }
-  
+
   def forExtension(ext: String): Option[MediaType] = {
     val extLower = ext.toLowerCase
     registry.values.find(_.fileExtensions.contains(extLower))
   }
-  
+
   class ApplicationMediaType(val subType: String, val fileExtensions: String*) extends MediaType {
     def mainType = "application"
     override def isApplication = true
@@ -156,8 +156,8 @@ object MediaTypes extends ObjectRegistry[String, MediaType] {
   }
   class MultipartMediaType(val subType: String, val boundary: Option[String]) extends MediaType {
     override val value = boundary match {
-      case None       => mainType + '/' + subType
-      case _: Some[_] => mainType + '/' + subType + "; boundary=\"" + boundary.get + '"'
+      case None       ⇒ mainType + '/' + subType
+      case _: Some[_] ⇒ mainType + '/' + subType + "; boundary=\"" + boundary.get + '"'
     }
     def mainType = "multipart"
     def fileExtensions = Nil
@@ -171,56 +171,56 @@ object MediaTypes extends ObjectRegistry[String, MediaType] {
     def mainType = "video"
     override def isVideo = true
   }
-  
-  val `application/atom+xml`              = register(new ApplicationMediaType("atom+xml"))
-  val `application/javascript`            = register(new ApplicationMediaType("javascript", "js"))
-  val `application/json`                  = register(new ApplicationMediaType("json", "json"))
-  val `application/octet-stream`          = register(new ApplicationMediaType("octet-stream", "bin", "class", "exe"))
-  val `application/ogg`                   = register(new ApplicationMediaType("ogg", "ogg"))
-  val `application/pdf`                   = register(new ApplicationMediaType("pdf", "pdf"))
-  val `application/postscript`            = register(new ApplicationMediaType("postscript", "ps", "ai"))
-  val `application/soap+xml`              = register(new ApplicationMediaType("soap+xml"))
-  val `application/xhtml+xml`             = register(new ApplicationMediaType("xhtml+xml"))
-  val `application/xml-dtd`               = register(new ApplicationMediaType("xml-dtd"))
-  val `application/x-javascript`          = register(new ApplicationMediaType("x-javascript", "js"))
-  val `application/x-shockwave-flash`     = register(new ApplicationMediaType("x-shockwave-flash", "swf"))
-  val `application/x-www-form-urlencoded` = register(new ApplicationMediaType("x-www-form-urlencoded"))
-  val `application/zip`                   = register(new ApplicationMediaType("zip", "zip"))
-                                             
-  val `audio/basic`                       = register(new AudioMediaType("basic", "au", "snd"))
-  val `audio/mp4`                         = register(new AudioMediaType("mp4", "mp4"))
-  val `audio/mpeg`                        = register(new AudioMediaType("mpeg", "mpg", "mpeg", "mpga", "mpe", "mp3", "mp2"))
-  val `audio/ogg`                         = register(new AudioMediaType("ogg", "ogg"))
-  val `audio/vorbis`                      = register(new AudioMediaType("vorbis", "vorbis"))
-                                             
-  val `image/gif`                         = register(new ImageMediaType("gif", "gif"))
-  val `image/png`                         = register(new ImageMediaType("png", "png"))
-  val `image/jpeg`                        = register(new ImageMediaType("jpeg", "jpg", "jpeg", "jpe"))
-  val `image/svg+xml`                     = register(new ImageMediaType("svg+xml", "svg"))
-  val `image/tiff`                        = register(new ImageMediaType("tiff", "tif", "tiff"))
-  val `image/vnd.microsoft.icon`          = register(new ImageMediaType("vnd.microsoft.icon", "ico"))
-                                             
-  val `message/http`                      = register(new MessageMediaType("http"))
-  val `message/delivery-status`           = register(new MessageMediaType("delivery-status"))
-                                             
-  class `multipart/mixed`      (boundary: Option[String] = None) extends MultipartMediaType("mixed", boundary)
-  class `multipart/alternative`(boundary: Option[String] = None) extends MultipartMediaType("alternative", boundary)
-  class `multipart/related`    (boundary: Option[String] = None) extends MultipartMediaType("related", boundary)
-  class `multipart/form-data`  (boundary: Option[String] = None) extends MultipartMediaType("form-data", boundary)
-  class `multipart/signed`     (boundary: Option[String] = None) extends MultipartMediaType("signed", boundary)
-  class `multipart/encrypted`  (boundary: Option[String] = None) extends MultipartMediaType("encrypted", boundary)
 
-  val `text/css`                          = register(new TextMediaType("css", "css"))
-  val `text/csv`                          = register(new TextMediaType("csv", "csv"))
-  val `text/html`                         = register(new TextMediaType("html", "html", "htm"))
-  val `text/javascript`                   = register(new TextMediaType("javascript", "js"))
-  val `text/plain`                        = register(new TextMediaType("plain", "txt", "text", "conf", "properties"))
-  val `text/xml`                          = register(new TextMediaType("xml", "xml"))
-                                             
-  val `video/mpeg`                        = register(new VideoMediaType("mpeg", "mpg", "mpeg"))
-  val `video/mp4`                         = register(new VideoMediaType("mp4", "mp4"))
-  val `video/ogg`                         = register(new VideoMediaType("ogg", "ogg"))
-  val `video/quicktime`                   = register(new VideoMediaType("quicktime", "qt", "mov"))
+  val `application/atom+xml` = register(new ApplicationMediaType("atom+xml"))
+  val `application/javascript` = register(new ApplicationMediaType("javascript", "js"))
+  val `application/json` = register(new ApplicationMediaType("json", "json"))
+  val `application/octet-stream` = register(new ApplicationMediaType("octet-stream", "bin", "class", "exe"))
+  val `application/ogg` = register(new ApplicationMediaType("ogg", "ogg"))
+  val `application/pdf` = register(new ApplicationMediaType("pdf", "pdf"))
+  val `application/postscript` = register(new ApplicationMediaType("postscript", "ps", "ai"))
+  val `application/soap+xml` = register(new ApplicationMediaType("soap+xml"))
+  val `application/xhtml+xml` = register(new ApplicationMediaType("xhtml+xml"))
+  val `application/xml-dtd` = register(new ApplicationMediaType("xml-dtd"))
+  val `application/x-javascript` = register(new ApplicationMediaType("x-javascript", "js"))
+  val `application/x-shockwave-flash` = register(new ApplicationMediaType("x-shockwave-flash", "swf"))
+  val `application/x-www-form-urlencoded` = register(new ApplicationMediaType("x-www-form-urlencoded"))
+  val `application/zip` = register(new ApplicationMediaType("zip", "zip"))
+
+  val `audio/basic` = register(new AudioMediaType("basic", "au", "snd"))
+  val `audio/mp4` = register(new AudioMediaType("mp4", "mp4"))
+  val `audio/mpeg` = register(new AudioMediaType("mpeg", "mpg", "mpeg", "mpga", "mpe", "mp3", "mp2"))
+  val `audio/ogg` = register(new AudioMediaType("ogg", "ogg"))
+  val `audio/vorbis` = register(new AudioMediaType("vorbis", "vorbis"))
+
+  val `image/gif` = register(new ImageMediaType("gif", "gif"))
+  val `image/png` = register(new ImageMediaType("png", "png"))
+  val `image/jpeg` = register(new ImageMediaType("jpeg", "jpg", "jpeg", "jpe"))
+  val `image/svg+xml` = register(new ImageMediaType("svg+xml", "svg"))
+  val `image/tiff` = register(new ImageMediaType("tiff", "tif", "tiff"))
+  val `image/vnd.microsoft.icon` = register(new ImageMediaType("vnd.microsoft.icon", "ico"))
+
+  val `message/http` = register(new MessageMediaType("http"))
+  val `message/delivery-status` = register(new MessageMediaType("delivery-status"))
+
+  class `multipart/mixed`(boundary: Option[String] = None) extends MultipartMediaType("mixed", boundary)
+  class `multipart/alternative`(boundary: Option[String] = None) extends MultipartMediaType("alternative", boundary)
+  class `multipart/related`(boundary: Option[String] = None) extends MultipartMediaType("related", boundary)
+  class `multipart/form-data`(boundary: Option[String] = None) extends MultipartMediaType("form-data", boundary)
+  class `multipart/signed`(boundary: Option[String] = None) extends MultipartMediaType("signed", boundary)
+  class `multipart/encrypted`(boundary: Option[String] = None) extends MultipartMediaType("encrypted", boundary)
+
+  val `text/css` = register(new TextMediaType("css", "css"))
+  val `text/csv` = register(new TextMediaType("csv", "csv"))
+  val `text/html` = register(new TextMediaType("html", "html", "htm"))
+  val `text/javascript` = register(new TextMediaType("javascript", "js"))
+  val `text/plain` = register(new TextMediaType("plain", "txt", "text", "conf", "properties"))
+  val `text/xml` = register(new TextMediaType("xml", "xml"))
+
+  val `video/mpeg` = register(new VideoMediaType("mpeg", "mpg", "mpeg"))
+  val `video/mp4` = register(new VideoMediaType("mp4", "mp4"))
+  val `video/ogg` = register(new VideoMediaType("ogg", "ogg"))
+  val `video/quicktime` = register(new VideoMediaType("quicktime", "qt", "mov"))
 
   object CustomMediaType {
     def apply(value: String, fileExtensions: String*) = {
@@ -235,14 +235,14 @@ object MediaTypes extends ObjectRegistry[String, MediaType] {
    * your custom Marshallers and Unmarshallers.
    */
   class CustomMediaType(val mainType: String, val subType: String, val fileExtensions: Seq[String] = Nil)
-          extends MediaType {
+      extends MediaType {
     require(value == value.toLowerCase, "For best performance custom media types must be defined in lowercase")
     override def isApplication = mainType == "application"
-    override def isAudio       = mainType == "audio"
-    override def isImage       = mainType == "image"
-    override def isMessage     = mainType == "message"
-    override def isMultipart   = mainType == "multipart"
-    override def isText        = mainType == "text"
-    override def isVideo       = mainType == "video"
+    override def isAudio = mainType == "audio"
+    override def isImage = mainType == "image"
+    override def isMessage = mainType == "message"
+    override def isMultipart = mainType == "multipart"
+    override def isText = mainType == "text"
+    override def isVideo = mainType == "video"
   }
 }

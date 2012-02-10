@@ -29,18 +29,18 @@ abstract class HttpHeader extends Product {
 object HttpHeader {
   def apply(name: String, value: String): HttpHeader = {
     HttpParser.rules.get(name.trim.toUpperCase.replace('-', '_')) match {
-      case None => HttpHeaders.CustomHeader(name, value)
-      case Some(rule) => {
+      case None ⇒ HttpHeaders.CustomHeader(name, value)
+      case Some(rule) ⇒ {
         HttpParser.parse(rule, value) match {
-          case Left(error) => throw new HttpException(StatusCodes.BadRequest, 
+          case Left(error) ⇒ throw new HttpException(StatusCodes.BadRequest,
             "Illegal HTTP header '" + name + "':\n" + error)
-          case Right(header) => header
+          case Right(header) ⇒ header
         }
-      } 
+      }
     }
   }
-  
-  def unapply(header: HttpHeader): Option[(String, String)] = Some(header.name -> header.value) 
+
+  def unapply(header: HttpHeader): Option[(String, String)] = Some(header.name -> header.value)
 }
 
 object HttpHeaders {
@@ -49,27 +49,27 @@ object HttpHeaders {
   case class `Accept`(mediaRanges: Seq[MediaRange]) extends HttpHeader {
     def value = mediaRanges.map(_.value).mkString(", ")
   }
-  
+
   object `Accept-Charset` { def apply(first: HttpCharsetRange, more: HttpCharsetRange*): `Accept-Charset` = apply(first +: more) }
   case class `Accept-Charset`(charsetRanges: Seq[HttpCharsetRange]) extends HttpHeader {
     def value = charsetRanges.map(_.value).mkString(", ")
   }
-  
+
   object `Accept-Encoding` { def apply(first: HttpEncodingRange, more: HttpEncodingRange*): `Accept-Encoding` = apply(first +: more) }
   case class `Accept-Encoding`(encodings: Seq[HttpEncodingRange]) extends HttpHeader {
     def value = encodings.map(_.value).mkString(", ")
   }
-  
+
   object `Accept-Language` { def apply(first: LanguageRange, more: LanguageRange*): `Accept-Language` = apply(first +: more) }
   case class `Accept-Language`(languageRanges: Seq[LanguageRange]) extends HttpHeader {
     def value = languageRanges.map(_.value).mkString(", ")
   }
-  
+
   object `Accept-Ranges` { def apply(first: RangeUnit, more: RangeUnit*): `Accept-Ranges` = apply(first +: more) }
   case class `Accept-Ranges`(rangeUnits: Seq[RangeUnit]) extends HttpHeader {
     def value = if (rangeUnits.isEmpty) "none" else rangeUnits.mkString(", ")
   }
-  
+
   case class `Authorization`(credentials: HttpCredentials) extends HttpHeader {
     def value = credentials.value
   }
@@ -86,17 +86,17 @@ object HttpHeaders {
 
   // see http://tools.ietf.org/html/rfc2183
   case class `Content-Disposition`(dispositionType: String, parameters: Map[String, String]) extends HttpHeader {
-    def value = parameters.map(p => "; " + p._1 + "=\"" + p._2 + '"').mkString(dispositionType, "", "")
+    def value = parameters.map(p ⇒ "; " + p._1 + "=\"" + p._2 + '"').mkString(dispositionType, "", "")
   }
 
   case class `Content-Encoding`(encoding: HttpEncoding) extends HttpHeader {
     def value = encoding.value
   }
-  
+
   case class `Content-Length`(length: Int) extends HttpHeader {
     def value = length.toString
   }
-  
+
   case class `Content-Type`(contentType: ContentType) extends HttpHeader {
     def value = contentType.value
   }
@@ -105,7 +105,7 @@ object HttpHeaders {
   case class `Cookie`(cookies: Seq[HttpCookie]) extends HttpHeader {
     def value = cookies.mkString("; ")
   }
-  
+
   case class `Date`(date: DateTime) extends HttpHeader {
     def value = date.toRfc1123DateTimeString
   }
@@ -117,7 +117,7 @@ object HttpHeaders {
   case class `Last-Modified`(date: DateTime) extends HttpHeader {
     def value = date.toRfc1123DateTimeString
   }
-  
+
   case class `Location`(absoluteUri: String) extends HttpHeader {
     def value = absoluteUri
   }
@@ -130,12 +130,12 @@ object HttpHeaders {
   case class `WWW-Authenticate`(challenges: Seq[HttpChallenge]) extends HttpHeader {
     def value = challenges.mkString(", ")
   }
-  
+
   object `X-Forwarded-For` { def apply(first: HttpIp, more: HttpIp*): `X-Forwarded-For` = apply(first +: more) }
   case class `X-Forwarded-For`(ips: Seq[HttpIp]) extends HttpHeader {
     def value = ips.mkString(", ")
   }
-  
+
   case class `CustomHeader`(override val name: String, value: String) extends HttpHeader
 
   /////////////////////////////////////////////////////////////////////////////////////////
@@ -145,11 +145,11 @@ object HttpHeaders {
     var contentType: Option[`Content-Type`] = None
     var contentLength: Option[`Content-Length`] = None
     val filtered = ListBuffer.empty[HttpHeader]
-    rawHeaders.foreach { raw =>
+    rawHeaders.foreach { raw ⇒
       HttpHeader(raw._1, raw._2) match {
-        case x:`Content-Type` => contentType = Some(x)
-        case x:`Content-Length` => contentLength = Some(x)
-        case x => filtered += x
+        case x: `Content-Type`   ⇒ contentType = Some(x)
+        case x: `Content-Length` ⇒ contentLength = Some(x)
+        case x                   ⇒ filtered += x
       }
     }
     (contentType, contentLength, filtered.toList)

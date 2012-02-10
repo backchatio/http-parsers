@@ -30,10 +30,10 @@ import java.net.URI
  * query and fragment string without scheme and authority (host and port).
  */
 case class HttpRequest(method: HttpMethod = HttpMethods.GET,
-                       uri: String = "/",
-                       headers: List[HttpHeader] = Nil,
-                       content: Option[HttpContent] = None,
-                       protocol: HttpProtocol = `HTTP/1.1`) extends HttpMessage[HttpRequest] {
+    uri: String = "/",
+    headers: List[HttpHeader] = Nil,
+    content: Option[HttpContent] = None,
+    protocol: HttpProtocol = `HTTP/1.1`) extends HttpMessage[HttpRequest] {
 
   lazy val URI = new URI(uri)
 
@@ -52,20 +52,20 @@ case class HttpRequest(method: HttpMethod = HttpMethods.GET,
 
   lazy val acceptedMediaRanges: List[MediaRange] = {
     // TODO: sort by preference
-    for (Accept(mediaRanges) <- headers; range <- mediaRanges) yield range
-  }
-  
-  lazy val acceptedCharsetRanges: List[HttpCharsetRange] = {
-    // TODO: sort by preference
-    for (`Accept-Charset`(charsetRanges) <- headers; range <- charsetRanges) yield range
-  }
-  
-  lazy val acceptedEncodingRanges: List[HttpEncodingRange] = {
-    // TODO: sort by preference
-    for (`Accept-Encoding`(encodingRanges) <- headers; range <- encodingRanges) yield range
+    for (Accept(mediaRanges) ← headers; range ← mediaRanges) yield range
   }
 
-  lazy val cookies: List[HttpCookie] = for (`Cookie`(cookies) <- headers; cookie <- cookies) yield cookie
+  lazy val acceptedCharsetRanges: List[HttpCharsetRange] = {
+    // TODO: sort by preference
+    for (`Accept-Charset`(charsetRanges) ← headers; range ← charsetRanges) yield range
+  }
+
+  lazy val acceptedEncodingRanges: List[HttpEncodingRange] = {
+    // TODO: sort by preference
+    for (`Accept-Encoding`(encodingRanges) ← headers; range ← encodingRanges) yield range
+  }
+
+  lazy val cookies: List[HttpCookie] = for (`Cookie`(cookies) ← headers; cookie ← cookies) yield cookie
 
   /**
    * Determines whether the given mediatype is accepted by the client.
@@ -111,7 +111,8 @@ case class HttpRequest(method: HttpMethod = HttpMethods.GET,
     if (isContentTypeAccepted(contentType)) Some {
       if (contentType.charset.isDefined) contentType
       else ContentType(contentType.mediaType, acceptedCharset)
-    } else None
+    }
+    else None
   }
 
   /**
@@ -120,8 +121,8 @@ case class HttpRequest(method: HttpMethod = HttpMethods.GET,
   def acceptedCharset: HttpCharset = {
     if (isCharsetAccepted(`ISO-8859-1`)) `ISO-8859-1`
     else acceptedCharsetRanges match {
-      case (cs: HttpCharset) :: _ => cs
-      case _ => throw new IllegalStateException // a HttpCharsetRange that is not `*` ?
+      case (cs: HttpCharset) :: _ ⇒ cs
+      case _                      ⇒ throw new IllegalStateException // a HttpCharsetRange that is not `*` ?
     }
   }
 

@@ -22,27 +22,26 @@ import org.parboiled.common.Base64
 import BasicRules._
 
 private[parser] trait AuthorizationHeader {
-  this: Parser with ProtocolParameterRules with AdditionalRules =>
+  this: Parser with ProtocolParameterRules with AdditionalRules ⇒
 
   def AUTHORIZATION = rule {
-    CredentialDef ~~> HttpHeaders.`Authorization` 
+    CredentialDef ~~> HttpHeaders.`Authorization`
   }
-  
+
   def CredentialDef = rule {
     BasicCredentialDef | OtherCredentialDef
   }
-  
+
   def BasicCredentialDef = rule {
     "Basic" ~ BasicCookie ~> (BasicHttpCredentials(_))
   }
-  
+
   def BasicCookie = rule {
     oneOrMore(anyOf(Base64.rfc2045.getAlphabet))
   }
-  
+
   def OtherCredentialDef = rule (
     AuthScheme ~ zeroOrMore(AuthParam, separator = ListSep)
-        ~~> ((scheme, params) => OtherHttpCredentials(scheme, params.toMap))
-  )
+      ~~> ((scheme, params) ⇒ OtherHttpCredentials(scheme, params.toMap)))
 
 }

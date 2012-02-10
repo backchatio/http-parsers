@@ -81,12 +81,12 @@ sealed abstract class DateTime extends Ordered[DateTime] {
   /**
    * Creates a new `DateTime` that represents the point in time the given number of ms later.
    */
-  def + (millis: Long): DateTime = DateTime(clicks + millis)
+  def +(millis: Long): DateTime = DateTime(clicks + millis)
 
   /**
    * Creates a new `DateTime` that represents the point in time the given number of ms earlier.
    */
-  def - (millis: Long): DateTime = DateTime(clicks - millis)
+  def -(millis: Long): DateTime = DateTime(clicks - millis)
 
   /**
    * `yyyy-mm-dd`
@@ -122,8 +122,8 @@ sealed abstract class DateTime extends Ordered[DateTime] {
   override def hashCode() = clicks.##
 
   override def equals(obj: Any) = obj match {
-    case x: DateTime => x.clicks == clicks
-    case _ => false
+    case x: DateTime ⇒ x.clicks == clicks
+    case _           ⇒ false
   }
 
   override def toString = toIsoDateTimeString
@@ -138,7 +138,7 @@ object DateTime {
   /**
    * Creates a new `DateTime` with the given properties.
    */
-  def apply(year_ :Int, month_ :Int, day_ :Int, hour_ :Int = 0, minute_ :Int = 0, second_ :Int = 0): DateTime = new DateTime {
+  def apply(year_ : Int, month_ : Int, day_ : Int, hour_ : Int = 0, minute_ : Int = 0, second_ : Int = 0): DateTime = new DateTime {
     val year = check(year_, 1800 <= year_ && year_ <= 2199, "year must be >= 1800 and <= 2199")
     val month = check(month_, 1 <= month_ && month_ <= 12, "month must be >= 1 and <= 12")
     val day = check(day_, 1 <= day_ && day_ <= 31, "day must be >= 1 and <= 31")
@@ -152,7 +152,7 @@ object DateTime {
       var d = (m % 7) * 30 + (m % 7 + 1) / 2 + day
       if (m >= 7) d += 214
       if (d >= 61) d -= 1 // skip non-existent Feb 30
-      if (!isLeapYear && (d >= 60)) d -=1 // skip non-existent Feb 29
+      if (!isLeapYear && (d >= 60)) d -= 1 // skip non-existent Feb 29
 
       // convert year/yearday to days since Jan 1, 1970, 00:00:00
       val y = year - 1
@@ -172,7 +172,7 @@ object DateTime {
    * Creates a new `DateTime` from the number of milli seconds
    * since the start of "the epoch", namely January 1, 1970, 00:00:00 GMT.
    */
-  def apply(clicks_ :Long): DateTime = new DateTime {
+  def apply(clicks_ : Long): DateTime = new DateTime {
     val clicks = clicks_ - clicks_ % 1000
 
     require(DateTime.MinValue <= this && this <= DateTime.MaxValue,
@@ -183,7 +183,7 @@ object DateTime {
       // compute day number, seconds since beginning of day
       var s = clicks
       if (s >= 0) s /= 1000 // seconds since 1 Jan 1970
-      else s = (s - 999 ) / 1000 // floor(sec/1000)
+      else s = (s - 999) / 1000 // floor(sec/1000)
 
       var dn = (s / 86400).toInt
       s %= 86400 // positive seconds since beginning of day
@@ -199,7 +199,7 @@ object DateTime {
         d %= 36524
         y += 4 * (d / 1461)
         d %= 1461
-        if (d == 1460) { y += 3; d=365 } // last year out of 4 is long
+        if (d == 1460) { y += 3; d = 365 } // last year out of 4 is long
         else {
           y += d / 365
           d %= 365
@@ -209,7 +209,7 @@ object DateTime {
       val isLeap = ((y % 4 == 0) && !(y % 100 == 0)) || (y % 400 == 0)
 
       // compute month/monthday from year/yearday
-      if (!isLeap && (d >= 59)) d +=1 // skip non-existent Feb 29
+      if (!isLeap && (d >= 59)) d += 1 // skip non-existent Feb 29
       if (d >= 60) d += 1 // skip non-existent Feb 30
       var mon = ((d % 214) / 61) * 2 + ((d % 214) % 61) / 31
       if (d > 213) mon += 7

@@ -41,15 +41,13 @@ package object http {
         HttpHeader("Content-Encoding", "deflate"),
         HttpHeader("Content-Length", "42"),
         HttpHeader("Content-Type", "application/json"),
-        HttpHeader("Fancy-Custom-Header", "yeah")
-      ),
-      content = Some(HttpContent("backchat rocks!"))
-    )
+        HttpHeader("Fancy-Custom-Header", "yeah")),
+      content = Some(HttpContent("backchat rocks!")))
     HttpResponse(status = 200)
     HttpIp.fromString("127.0.0.1")
   }
-  
-  def identityFunc[T <: Any] = (x: T) => x
+
+  def identityFunc[T <: Any] = (x: T) ⇒ x
 
   implicit def seq2httpParserLinearSeq[A](coll: LinearSeq[A]) = new HttpParserLinearSeq[A](coll)
 

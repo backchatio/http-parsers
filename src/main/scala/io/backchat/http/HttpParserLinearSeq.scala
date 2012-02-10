@@ -19,8 +19,8 @@ package io.backchat.http
 import collection.LinearSeq
 
 private[http] class HttpParserLinearSeq[+A](underlying: LinearSeq[A]) {
-  
-  def mapFind[B](f: A => Option[B]): Option[B] = {
+
+  def mapFind[B](f: A ⇒ Option[B]): Option[B] = {
     var res: Option[B] = None
     var these = underlying
     while (res.isEmpty && !these.isEmpty) {
@@ -29,14 +29,14 @@ private[http] class HttpParserLinearSeq[+A](underlying: LinearSeq[A]) {
     }
     res
   }
-  
-  def findByType[B :ClassManifest]: Option[B] = {
+
+  def findByType[B: ClassManifest]: Option[B] = {
     val erasure = classManifest.erasure
-    mapFind { x =>
+    mapFind { x ⇒
       if (erasure.isInstance(x)) {
         Some(x.asInstanceOf[B])
       } else None
     }
   }
-  
+
 }

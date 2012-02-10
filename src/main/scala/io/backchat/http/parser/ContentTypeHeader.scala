@@ -22,24 +22,22 @@ import StatusCodes._
 import HttpHeaders._
 
 private[parser] trait ContentTypeHeader {
-  this: Parser with ProtocolParameterRules with CommonActions =>
+  this: Parser with ProtocolParameterRules with CommonActions ⇒
 
   def CONTENT_TYPE = rule (
-    MediaTypeDecl ~ EOI
-  )
-  
+    MediaTypeDecl ~ EOI)
+
   def MediaTypeDecl = rule (
-    MediaTypeDef ~~> (createContentTypeHeader(_, _, _))
-  )
-  
+    MediaTypeDef ~~> (createContentTypeHeader(_, _, _)))
+
   private def createContentTypeHeader(mainType: String, subType: String, params: Map[String, String]) = {
     val mimeType = getMediaType(mainType, subType, params.get("boundary"))
-    val charset = params.get("charset").map { charsetName =>
+    val charset = params.get("charset").map { charsetName ⇒
       HttpCharsets.getForKey(charsetName.toLowerCase).getOrElse {
         throw new HttpException(BadRequest, "Unsupported charset: " + charsetName)
       }
     }
     `Content-Type`(ContentType(mimeType, charset))
   }
-  
+
 }

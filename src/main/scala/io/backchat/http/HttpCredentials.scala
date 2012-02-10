@@ -32,7 +32,7 @@ case class BasicHttpCredentials(username: String, password: String) extends Http
     val bytes = userPass.getBytes(`ISO-8859-1`.nioCharset)
     val cookie = Base64.rfc2045.encodeToString(bytes, false)
     "Basic " + cookie
-  } 
+  }
 }
 
 object BasicHttpCredentials {
@@ -40,9 +40,9 @@ object BasicHttpCredentials {
     val bytes = Base64.rfc2045.decodeFast(credentials)
     val userPass = new String(bytes, `ISO-8859-1`.nioCharset)
     userPass.indexOf(':') match {
-      case -1 => apply(userPass, "")
-      case ix => apply(userPass.substring(0, ix), userPass.substring(ix + 1))
-    } 
+      case -1 ⇒ apply(userPass, "")
+      case ix ⇒ apply(userPass.substring(0, ix), userPass.substring(ix + 1))
+    }
   }
 }
 
@@ -51,18 +51,17 @@ case class OtherHttpCredentials(scheme: String, params: Map[String, String]) ext
     val sb = new java.lang.StringBuilder(scheme).append(' ')
     var first = true
     params.foreach {
-      case (k, v) =>
+      case (k, v) ⇒
         if (first) first = false else sb.append(',')
         sb.append(k).append('=').append('"')
         v.foreach {
-          case '"' => sb.append('\\').append('"')
-          case '\\' => sb.append('\\').append('\\')
-          case c => sb.append(c)
+          case '"'  ⇒ sb.append('\\').append('"')
+          case '\\' ⇒ sb.append('\\').append('\\')
+          case c    ⇒ sb.append(c)
         }
         sb.append('"')
     }
     sb.toString
   }
 }
-
 

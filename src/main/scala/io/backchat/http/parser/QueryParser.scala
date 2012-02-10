@@ -21,30 +21,29 @@ import org.parboiled.scala._
 import java.net.URLDecoder
 
 object QueryParser extends SprayParser {
-  
+
   def QueryString: Rule1[Map[String, String]] = rule (
-      EOI ~ push(Map.empty[String, String])
-    | zeroOrMore(QueryParameter, separator = "&") ~ EOI ~~> (_.toMap)
-  )
-  
+    EOI ~ push(Map.empty[String, String])
+      | zeroOrMore(QueryParameter, separator = "&") ~ EOI ~~> (_.toMap))
+
   def QueryParameter = rule {
-    QueryParameterComponent ~ optional("=") ~ (QueryParameterComponent | push("")) 
+    QueryParameterComponent ~ optional("=") ~ (QueryParameterComponent | push(""))
   }
-  
+
   def QueryParameterComponent = rule {
-    zeroOrMore(!anyOf("&=") ~ ANY) ~> (s => URLDecoder.decode(s, "UTF8"))
+    zeroOrMore(!anyOf("&=") ~ ANY) ~> (s ⇒ URLDecoder.decode(s, "UTF8"))
   }
-  
+
   def parse(queryString: String): Map[String, String] = {
     try {
       parse(QueryString, queryString) match {
-        case Left(error) => throw new RuntimeException(error)
-        case Right(parameterMap) => parameterMap
+        case Left(error)         ⇒ throw new RuntimeException(error)
+        case Right(parameterMap) ⇒ parameterMap
       }
     } catch {
-      case e: Exception => throw new HttpException(StatusCodes.BadRequest,
-          "Illegal query string '" + queryString + "':\n" + e.getMessage)
+      case e: Exception ⇒ throw new HttpException(StatusCodes.BadRequest,
+        "Illegal query string '" + queryString + "':\n" + e.getMessage)
     }
   }
-  
+
 }

@@ -25,20 +25,19 @@ import HttpHeaders._
  * parser rules for all headers that can be parsed with one simple rule
  */
 private[parser] trait SimpleHeaders {
-  this: Parser with ProtocolParameterRules with AdditionalRules =>
+  this: Parser with ProtocolParameterRules with AdditionalRules ⇒
 
   def CONNECTION = rule (
-    oneOrMore(Token, separator = ListSep) ~ EOI ~~> (HttpHeaders.Connection(_))
-  )
+    oneOrMore(Token, separator = ListSep) ~ EOI ~~> (HttpHeaders.Connection(_)))
 
   def CONTENT_LENGTH = rule {
-    oneOrMore(Digit) ~> (s => `Content-Length`(s.toInt)) ~ EOI
+    oneOrMore(Digit) ~> (s ⇒ `Content-Length`(s.toInt)) ~ EOI
   }
 
   def CONTENT_DISPOSITION = rule {
     Token ~ zeroOrMore(";" ~ Parameter) ~ EOI ~~> (_.toMap) ~~> `Content-Disposition`
   }
-  
+
   def DATE = rule {
     HttpDate ~ EOI ~~> Date
   }
@@ -54,5 +53,5 @@ private[parser] trait SimpleHeaders {
   def X_FORWARDED_FOR = rule {
     oneOrMore(Ip, separator = ListSep) ~ EOI ~~> (`X-Forwarded-For`(_))
   }
-  
+
 }

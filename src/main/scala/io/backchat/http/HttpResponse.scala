@@ -23,11 +23,10 @@ import java.nio.charset.Charset
  * Sprays immutable model of an HTTP response.
  */
 case class HttpResponse(
-  status: StatusCode,
-  headers: List[HttpHeader],
-  content: Option[HttpContent],
-  protocol: HttpProtocol
-) extends HttpMessage[HttpResponse] {
+    status: StatusCode,
+    headers: List[HttpHeader],
+    content: Option[HttpContent],
+    protocol: HttpProtocol) extends HttpMessage[HttpResponse] {
 
   def withHeaders(headers: List[HttpHeader]) = copy(headers = headers)
 

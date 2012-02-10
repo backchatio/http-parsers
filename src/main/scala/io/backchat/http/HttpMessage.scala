@@ -32,7 +32,7 @@ abstract class HttpMessage[T <: HttpMessage[T]] {
   /**
    * Creates a copy of this message with the heders transformed by the given function.
    */
-  def withHeadersTransformed(f: List[HttpHeader] => List[HttpHeader]): T = {
+  def withHeadersTransformed(f: List[HttpHeader] ⇒ List[HttpHeader]): T = {
     val transformed = f(headers)
     if (transformed eq headers) this.asInstanceOf[T] else withHeaders(transformed)
   }
@@ -40,15 +40,15 @@ abstract class HttpMessage[T <: HttpMessage[T]] {
   /**
    * Creates a copy of this message with the content transformed by the given function.
    */
-  def withContentTransformed(f: HttpContent => HttpContent): T = content match {
-    case Some(content) =>
+  def withContentTransformed(f: HttpContent ⇒ HttpContent): T = content match {
+    case Some(content) ⇒
       val transformed = f(content)
       if (transformed eq content) this.asInstanceOf[T] else withContent(Some(transformed))
-    case None => this.asInstanceOf[T]
+    case None ⇒ this.asInstanceOf[T]
   }
 
   /**
-   * Returns true if a Content-Encoding header is present. 
+   * Returns true if a Content-Encoding header is present.
    */
   def isEncodingSpecified: Boolean = headers.exists(_.isInstanceOf[`Content-Encoding`])
 
@@ -56,9 +56,9 @@ abstract class HttpMessage[T <: HttpMessage[T]] {
    * The content encoding as specified by the Content-Encoding header. If no Content-Encoding header is present the
    * default value 'identity' is returned.
    */
-  lazy val encoding = headers.collect { case `Content-Encoding`(enc) => enc } match {
-    case enc :: _ => enc
-    case Nil => HttpEncodings.identity
+  lazy val encoding = headers.collect { case `Content-Encoding`(enc) ⇒ enc } match {
+    case enc :: _ ⇒ enc
+    case Nil      ⇒ HttpEncodings.identity
   }
-  
+
 }
