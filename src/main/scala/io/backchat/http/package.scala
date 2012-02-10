@@ -20,30 +20,26 @@ import collection.LinearSeq
 
 package object http {
 
-  type HttpResult[+T] = Either[HttpException, T]
+  //  type HttpResult[+T] = Either[HttpException, T]
 
   /**
    * Warms up the io.backchat.http module by triggering the loading of most classes in this package,
    * so as to increase the speed of the first usage.
    */
   def warmUp() {
-    HttpRequest(
-      method = HttpMethods.GET,
-      uri = "",
-      headers = List(
-        HttpHeader("Accept", "*/*,text/plain,custom/custom"),
-        HttpHeader("Accept-Charset", "*,UTF-8,custom"),
-        HttpHeader("Accept-Encoding", "gzip,custom"),
-        HttpHeader("Accept-Language", "*,en-gb,custom"),
-        HttpHeader("Cache-Control", "no-cache"),
-        HttpHeader("Connection", "close"),
-        HttpHeader("Cookie", "backchat=cool"),
-        HttpHeader("Content-Encoding", "deflate"),
-        HttpHeader("Content-Length", "42"),
-        HttpHeader("Content-Type", "application/json"),
-        HttpHeader("Fancy-Custom-Header", "yeah")),
-      content = Some(HttpContent("backchat rocks!")))
-    HttpResponse(status = 200)
+    List(
+      HttpHeader("Accept", "*/*,text/plain,custom/custom"),
+      HttpHeader("Accept-Charset", "*,UTF-8,custom"),
+      HttpHeader("Accept-Encoding", "gzip,custom"),
+      HttpHeader("Accept-Language", "*,en-gb,custom"),
+      HttpHeader("Cache-Control", "no-cache"),
+      HttpHeader("Connection", "close"),
+      HttpHeader("Cookie", "backchat=cool"),
+      HttpHeader("Content-Encoding", "deflate"),
+      HttpHeader("Content-Length", "42"),
+      HttpHeader("Content-Type", "application/json"),
+      HttpHeader("Fancy-Custom-Header", "yeah"))
+    HttpContent("backchat rocks!")
     HttpIp.fromString("127.0.0.1")
   }
 

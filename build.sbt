@@ -3,7 +3,7 @@ import scalariform.formatter.preferences._
 
 name := "http-parsers"
 
-version := "0.3.1-SNAPSHOT"
+version := "0.3.2-SNAPSHOT"
 
 organization := "io.backchat.http"
 
