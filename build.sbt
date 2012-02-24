@@ -9,16 +9,27 @@ organization := "io.backchat.http"
 
 scalaVersion := "2.9.1"
 
+crossScalaVersions := Seq("2.9.1", "2.9.0-1", "2.8.2", "2.8.1")
+
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-Xcheckinit", "-encoding", "utf8")
 
-libraryDependencies <+= (scalaVersion) {
-  case _ => "org.specs2" %% "specs2" % "1.7.1" % "test"
+libraryDependencies <+= (scalaVersion) { 
+  _.split(Array('.', '-')).toList match { 
+    case "2" :: "8" :: _ => "org.specs2" %% "specs2" % "1.5" % "test"
+    case _ => "org.specs2" %% "specs2" % "1.7.1" % "test"
+  }
+}
+
+libraryDependencies <+= (scalaVersion) { 
+  _.split(Array('.', '-')).toList match { 
+    case "2" :: "8" :: _ => "org.parboiled" % "parboiled-scala" % "0.11.2"
+    case "2" :: "9" :: "0" :: _ => "org.parboiled" % "parboiled-scala" % "1.0.1"
+    case _ => "org.parboiled" % "parboiled-scala" % "1.0.2"
+  }
 }
 
 libraryDependencies ++= Seq(
-  compilerPlugin("org.scala-tools.sxr" % "sxr_2.9.0" % "0.2.7"),
-  "junit" % "junit" % "4.10" % "test",
-  "org.parboiled" %   "parboiled-scala" % "1.0.2" % "compile"
+  "junit" % "junit" % "4.10" % "test"
 )
 
 resolvers += "ScalaTools Snapshots" at "http://scala-tools.org/repo-snapshots"

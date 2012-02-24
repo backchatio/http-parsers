@@ -80,7 +80,7 @@ private[parser] trait ProtocolParameterRules {
 
   private def stringIndexRule(indexDelta: Int, strings: String*) = strings.zipWithIndex.map {
     case (s, ix) ⇒ str(s) ~ push(ix + indexDelta)
-  } reduce (_ | _)
+  } reduceLeft (_ | _)
 
   /* 3.3.2 Delta Seconds */
 
